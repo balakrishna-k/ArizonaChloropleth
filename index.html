@@ -16,6 +16,7 @@
         top: 191px;
         left: 420px;
         background-color: #d95f0e;
+        width: 510px;
         
     }
     
@@ -34,7 +35,7 @@
         top: 191px;
         left: 420px;
         background-color: steelblue;
-        
+        width: 510px;
     }
     
     .toggleState{
@@ -52,30 +53,30 @@
     }
     
     .button-container{
-        width: 700px;
-        transform: translate(29px,0px);
+        width: 250px;
+        transform: translate(29px,20px);
     }
     
     svg{
-        
-        transform: translate(0%,5%);
+        transform: translate(-8%,-4%);
     }
     
     .h1{
         width: 700px;
         color: #d95f0e;
-        transform: translate(250px,0);
+        transform: translate(60px,0);
     }
     
     .h1A{
         width: 700px;
         color: steelblue;
-        transform: translate(250px,0);
+        transform: translate(60px,0);
     }
     
     .header{
+        position: fixed;
         width: 700px;
-        transform: translate(170px,0);
+        transform: translate(800px,0);
     }
     
     rect{
@@ -111,16 +112,17 @@
 
         <div class = "button-container">    
             <button class="button toggleState">Toggle State Boundary</button>
-            <button class="button toggleTracts">Toggle Tract lines</button>
-            <button class="button toggleLegend">Toggle Legend colour</button>    
-        </div>    
+            <button class="button toggleTracts">Toggle Tract Boundary</button>
+            <button class="button toggleLegend">Toggle Colour Legend</button>    
+        </div>
+            
     </div>
     <svg width="960" height="1200"></svg>
     
     <script src="https://d3js.org/d3.v4.min.js"></script>
     <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
     <script src="https://d3js.org/topojson.v2.min.js"></script>
-
+    
     <script>
         
         var tracts;
@@ -144,14 +146,16 @@
         var x = d3.scaleSqrt()
             .domain([0, 4500])
             .rangeRound([440, 950]);
-
-        var gR = svg.append("g")
-            .attr("class", "keyR")
-            .attr("transform", "translate(-70,20)");
         
-        var gB = svg.append("g")
+        var svgLegend = d3.select(".header").append("svg").attr("width","700px");
+        
+        var gR = svgLegend.append("g")
+            .attr("class", "keyR")
+            .attr("transform", "translate(-350,60)");
+        
+        var gB = svgLegend.append("g")
             .attr("class", "keyB hidden")
-            .attr("transform", "translate(-70,20)");
+            .attr("transform", "translate(-350,60)");
 
         gR.selectAll("rect")
           .data(color.range().map(function(d) {
@@ -163,7 +167,7 @@
           .enter().append("rect")
             .attr("height", 8)
             .attr("x", function(d) { return x(d[0]); })
-            .attr("width", function(d) { return x(d[1]) - x(d[0]); })
+            .attr("width", function(d) { return (x(d[1]) - x(d[0])); })
             .attr("fill", function(d) { return color(d[0]); });
 
         gR.append("text")
