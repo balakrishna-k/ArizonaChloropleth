@@ -97,6 +97,10 @@
     .hidden text{
         visibility: hidden;
     }
+    
+    .hidden{
+        visibility: hidden;
+    }
 
 </style>
 
@@ -121,6 +125,7 @@
         
         var tracts;
         var counties;
+        var state;
 
         var svg = d3.select("svg"),
             width = +svg.attr("width"),
@@ -208,21 +213,35 @@
         d3.json("az-topo.json", function(error, topology) {
           if (error) throw error;
             
-        console.log(topology.objects);    
+            console.log(topology.objects);    
 
-        tracts = svg.append("g").attr("transform", "translate(0,70)").attr("class",".tracts")
-            .selectAll("path")
-            .data(topojson.feature(topology, topology.objects.tracts).features)
-            .enter().append("path")
-              .attr("fill", function(d) { return color(d.properties.density); })
-              .attr("stroke", "#000").attr("stroke-opacity", 0) //Change this to on click to display tract area
-              .attr("d", path);
+            tracts = svg.append("g").attr("transform", "translate(0,70)").attr("class",".tracts")
+                .selectAll("path")
+                .data(topojson.feature(topology, topology.objects.tracts).features)
+                .enter().append("path")
+                  .attr("fill", function(d) { return color(d.properties.density); })
+                  .attr("stroke", "#000").attr("stroke-opacity", 0) //Change this to on click to display tract area
+                  .attr("d", path);
 
-        counties =svg.append("g").attr("transform", "translate(0,70)").append("path")
-              .datum(topojson.feature(topology, topology.objects.counties))
+            counties = svg.append("g").attr("transform", "translate(0,70)").append("path")
+                  .datum(topojson.feature(topology, topology.objects.counties))
+                  .attr("fill", "none")
+                  .attr("stroke", "#000")
+                  .attr("stroke-opacity", 0.3) //Change opacity value to toggle 
+                  .attr("d", path);
+
+        });
+        
+        d3.json("az-state-topo.json", function(error, topology) {
+          if (error) throw error;
+            
+            console.log(topology.objects);  
+            
+            state = svg.append("g").attr("transform", "translate(0,70)").append("path").attr("class","state")
+              .datum(topojson.feature(topology, topology.objects.state))
               .attr("fill", "none")
               .attr("stroke", "#000")
-              .attr("stroke-opacity", 0.3) //Change opacity value to toggle 
+              .attr("stroke-opacity", 1).attr("stroke-width","2px") //Change opacity value to toggle 
               .attr("d", path);
         });
         
@@ -247,13 +266,15 @@
                         svg.selectAll("path")
                             .data(topojson.feature(topology, topology.objects.tracts).features)
                               //.attr("fill", function(d) { return color(d.properties.density); })
-                              .attr("stroke", "#000").attr("stroke-opacity", 0.3) //Change this to consider click for legend and state as well
+                            .attr("stroke", "#000").attr("stroke-opacity", 0).transition().duration(1000)  
+                            .attr("stroke", "#000").attr("stroke-opacity", 0.3) //Change this to consider click for legend and state as well
                               .attr("d", path);
                     }else{
                         svg.selectAll("path")
                             .data(topojson.feature(topology, topology.objects.tracts).features)
+                              .attr("stroke", "#000").attr("stroke-opacity", 0.3).transition().duration(1000)
                               //.attr("fill", function(d) { return color(d.properties.density); })
-                              .attr("stroke", "none").attr("stroke-opacity", 0) //Change this to on click to display tract area
+                              .attr("stroke", "#000").attr("stroke-opacity", 0) //Change this to on click to display tract area
                               .attr("d", path);
                     }
                 
@@ -264,9 +285,18 @@
         d3.select(".toggleState")
             .on("click", function(){
                 // Determine if current line is visible
-                
+                togState = !togState;
                 console.log("Pressed State!");
-                console.log(counties);    
+            
+                if (togState){
+                    svg.select(".state").attr("stroke","#000").attr("stroke-opacity",1).transition().duration(1000).attr("stroke","#000").attr("stroke-opacity", 0);    
+                }else{
+                    svg.select(".state").attr("stroke","#000").attr("stroke-opacity",0).transition().duration(1000).attr("stroke","#000").attr("stroke-opacity", 1);    
+            
+                }
+
+            
+            
         });
                 
         d3.select(".toggleLegend")
@@ -289,9 +319,6 @@
             
                 d3.select("h1").classed("h1",!togLeg);
                 d3.select("h1").classed("h1A",togLeg);
-                
-            
-                
             
                 console.log("Pressed Legend!");
                 d3.json("az-topo.json", function(error, topology) {
@@ -301,14 +328,18 @@
                     if (togLeg){
                         svg.selectAll("path")
                             .data(topojson.feature(topology, topology.objects.tracts).features)
-                              .attr("fill", function(d) { return colorAlt(d.properties.density); })
+                            .attr("fill", function(d) { return color(d.properties.density); }).transition().duration(800)  
+                            .attr("fill", function(d) { return colorAlt(d.properties.density); })
                               //.attr("stroke", "#000").attr("stroke-opacity", 0.3) //Change this to consider click for legend and state as well
                               .attr("d", path);
+                        
+                        
                         
                     }else{
                          svg.selectAll("path")
                             .data(topojson.feature(topology, topology.objects.tracts).features)
-                              .attr("fill", function(d) { return color(d.properties.density); })
+                            .attr("fill", function(d) { return colorAlt(d.properties.density); }).transition().duration(800)
+                             .attr("fill", function(d) { return color(d.properties.density); })
                              // .attr("stroke", "#000").attr("stroke-opacity", 0.3) //Change this to on click to display tract area
                               .attr("d", path);
                     }
