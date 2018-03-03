@@ -5,18 +5,18 @@
         
         border: none;
         color: white;
-        padding: 15px 32px;
+        padding: 15px 32px ;
         text-align: center;
         text-decoration: none;
         display: inline-block;
         font-size: 16px;
         font-weight: bold;
-        margin: 4px 2px;
+        margin: 20px 2px;
         cursor: pointer;
         top: 191px;
         left: 420px;
         background-color: #d95f0e;
-        width: 510px;
+        width: 350px;
         
     }
     
@@ -30,12 +30,12 @@
         display: inline-block;
         font-size: 16px;
         font-weight: bold;
-        margin: 4px 2px;
+        margin: 20px 2px;
         cursor: pointer;
         top: 191px;
         left: 420px;
         background-color: steelblue;
-        width: 510px;
+        width: 350px;
     }
     
     .toggleState{
@@ -54,29 +54,29 @@
     
     .button-container{
         width: 250px;
-        transform: translate(29px,20px);
+        transform: translate(29px,-5px);
     }
     
     svg{
-        transform: translate(-8%,-4%);
+        transform: translate(-8%,0%);
     }
     
     .h1{
         width: 700px;
         color: #d95f0e;
-        transform: translate(60px,0);
+        transform: translate(30px,-10px);
     }
     
     .h1A{
         width: 700px;
         color: steelblue;
-        transform: translate(60px,0);
+        transform: translate(30px,-10px);
     }
     
     .header{
         position: fixed;
         width: 700px;
-        transform: translate(800px,0);
+        transform: translate(875px,200px);
     }
     
     rect{
@@ -105,10 +105,10 @@
 
 </style>
 
-<body>
+<body style="background-color: whitesmoke">
 
     <div class="header">
-        <h1 class="h1">Arizona Population Density, 2016</h1>
+        <h2 class="h1">Arizona Population Density, 2016</h2>
 
         <div class = "button-container">    
             <button class="button toggleState">Toggle State Boundary</button>
@@ -147,21 +147,26 @@
             .domain([0, 4500])
             .rangeRound([440, 950]);
         
-        var svgLegend = d3.select(".header").append("svg").attr("width","700px");
+        var svgLegend = d3.select("svg");
         
         var gR = svgLegend.append("g")
             .attr("class", "keyR")
-            .attr("transform", "translate(-350,60)");
+            .attr("transform", "translate(-75,30)");
         
         var gB = svgLegend.append("g")
             .attr("class", "keyB hidden")
-            .attr("transform", "translate(-350,60)");
+            .attr("transform", "translate(-75,30)");
 
         gR.selectAll("rect")
           .data(color.range().map(function(d) {
+              console.log(d);
               d = color.invertExtent(d);
-              if (d[0] == null) d[0] = x.domain()[0];
-              if (d[1] == null) d[1] = x.domain()[1];
+              console.log(d);
+              if (d[0] == null) 
+                  d[0] = x.domain()[0];
+              if (d[1] == null) 
+                  d[1] = x.domain()[1];
+              //console.log(d);
               return d;
             }))
           .enter().append("rect")
@@ -173,8 +178,8 @@
         gR.append("text")
             .attr("class", "caption")
             .attr("x", x.range()[0])
-            .attr("y", -5).attr("transform", "translate(355,0)")
-            .attr("font-size","12px").attr("fill", "#d95f0e")
+            .attr("y", -5).attr("transform", "translate(335,-10)")
+            .attr("font-size","14px").attr("fill", "#d95f0e")
             .attr("text-anchor", "start")
             .attr("font-weight", "bold")
             .text("Population per square mile");
@@ -201,8 +206,8 @@
         gB.append("text")
             .attr("class", "caption")
             .attr("x", x.range()[0])
-            .attr("y", -5).attr("transform", "translate(355,0)")
-            .attr("font-size","12px")
+            .attr("y", -5).attr("transform", "translate(335,-10)")
+            .attr("font-size","14px")
             .attr("fill", "steelblue")
             .attr("text-anchor", "start")
             .attr("font-weight", "bold")
@@ -321,8 +326,8 @@
                 d3.select(".toggleState").classed("button",!togLeg);
                 d3.select(".toggleState").classed("buttonA",togLeg);
             
-                d3.select("h1").classed("h1",!togLeg);
-                d3.select("h1").classed("h1A",togLeg);
+                d3.select("h2").classed("h1",!togLeg);
+                d3.select("h2").classed("h1A",togLeg);
             
                 console.log("Pressed Legend!");
                 d3.json("az-topo.json", function(error, topology) {
@@ -336,7 +341,7 @@
                             .attr("fill", function(d) { return colorAlt(d.properties.density); })
                               //.attr("stroke", "#000").attr("stroke-opacity", 0.3) //Change this to consider click for legend and state as well
                               .attr("d", path);
-                        
+                        d3.select("body").style("background-color","lightgoldenrodyellow").transition().duration(800).style("background-color","whitesmoke");
                         
                         
                     }else{
@@ -346,6 +351,7 @@
                              .attr("fill", function(d) { return color(d.properties.density); })
                              // .attr("stroke", "#000").attr("stroke-opacity", 0.3) //Change this to on click to display tract area
                               .attr("d", path);
+                        d3.select("body").style("background-color","whitesmoke").transition().duration(800).style("background-color","lightgoldenrodyellow");
                     }
                 });
                 
